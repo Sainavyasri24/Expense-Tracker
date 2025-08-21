@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import CategoryPieChart from './CategoryPieChart';
 import SpendingOverTimeChart from './SpendingOverTimeChart';
 import './App.css';
+import MonthlyTotalsBarChart from './MonthlyTotalsBarChart';
 
 const categories = ['Food', 'Transport', 'Bills', 'Entertainment', 'Shopping', 'Other'];
 
@@ -56,7 +57,7 @@ function AddExpense({ onAdd }) {
   );
 }
 
-function ExpenseList({ expenses }) {
+function ExpenseList({ expenses, showActions = false, onDelete }) {
   return (
     <table border="1" cellPadding="12" style={{ borderCollapse: 'collapse', width: '100%', fontSize: '1.5rem' }}>
       <thead>
@@ -65,6 +66,7 @@ function ExpenseList({ expenses }) {
           <th>Category</th>
           <th>Amount</th>
           <th>Note</th>
+          {showActions && <th>Actions</th>}
         </tr>
       </thead>
       <tbody>
@@ -74,6 +76,16 @@ function ExpenseList({ expenses }) {
             <td>{exp.category}</td>
             <td>{exp.amount}</td>
             <td>{exp.note}</td>
+            {showActions && (
+              <td>
+                <button
+                  onClick={() => onDelete && onDelete(exp.id)}
+                  style={{ fontSize: '1.1rem', padding: '8px 14px', borderRadius: '6px' }}
+                >
+                  Clear
+                </button>
+              </td>
+            )}
           </tr>
         ))}
       </tbody>
@@ -127,13 +139,41 @@ export default function App() {
   const [filterStartDate, setFilterStartDate] = useState('');
   const [filterEndDate, setFilterEndDate] = useState('');
   const [budget, setBudget] = useState(1000);
-  const [page, setPage] = useState(1); // 1: Summary & Add form, 2: Filters, Charts & Table
+  const [page, setPage] = useState(1); // 1: Summary & Add form, 2: Filters, Charts & Table, 3: Month-wise Archive
+  const [monthlyArchives, setMonthlyArchives] = useState(() => {
+    const saved = localStorage.getItem('monthlyArchives');
+    return saved ? JSON.parse(saved) : {};
+  });
+  const [selectedMonth, setSelectedMonth] = useState('');
 
   function handleAddExpense(expense) {
     setExpenses(prev => [
       { ...expense, id: prev.length ? prev[0].id + 1 : 1 },
       ...prev
     ]);
+  }
+
+  function handleDeleteExpense(id) {
+    setExpenses(prev => prev.filter(exp => exp.id !== id));
+  }
+
+  function handleClearAndArchive() {
+    if (!expenses.length) return;
+    const groupedByMonth = expenses.reduce((acc, exp) => {
+      const monthKey = (exp.date && exp.date.slice(0, 7)) || new Date().toISOString().slice(0, 7);
+      if (!acc[monthKey]) acc[monthKey] = [];
+      acc[monthKey].push(exp);
+      return acc;
+    }, {});
+
+    const mergedArchives = { ...monthlyArchives };
+    Object.keys(groupedByMonth).forEach(monthKey => {
+      mergedArchives[monthKey] = [ ...(mergedArchives[monthKey] || []), ...groupedByMonth[monthKey] ];
+    });
+
+    localStorage.setItem('monthlyArchives', JSON.stringify(mergedArchives));
+    setMonthlyArchives(mergedArchives);
+    setExpenses([]);
   }
 
   const filteredExpenses = expenses.filter(expense => {
@@ -148,6 +188,14 @@ export default function App() {
     margin: '8px',
     borderRadius: '6px'
   };
+
+  const archivedMonths = Object.keys(monthlyArchives).sort();
+  const monthlyTotals = archivedMonths.reduce((acc, monthKey) => {
+    const items = monthlyArchives[monthKey] || [];
+    const total = items.reduce((sum, exp) => sum + (exp.amount || 0), 0);
+    acc[monthKey] = total;
+    return acc;
+  }, {});
 
   return (
     <div className="container">
@@ -196,9 +244,39 @@ export default function App() {
             </div>
             <div className="chart-item">
               <SpendingOverTimeChart expenses={filteredExpenses} />
+              <div style={{ textAlign: 'right', marginTop: '10px' }}>
+                <button onClick={handleClearAndArchive} style={{ fontSize: '1.2rem', padding: '10px 20px', borderRadius: '6px' }}>Clear</button>
+              </div>
             </div>
           </div>
-          <ExpenseList expenses={filteredExpenses} />
+          <ExpenseList expenses={filteredExpenses} showActions onDelete={handleDeleteExpense} />
+        </>
+      )}
+
+      {page === 3 && (
+        <>
+          <h2 style={{ fontSize: '2.0rem' }}>Month-wise Archive</h2>
+          {archivedMonths.length === 0 ? (
+            <p style={{ fontSize: '1.2rem' }}>No archived months yet. Use Clear on Page 2 to archive the current list by month.</p>
+          ) : (
+            <div style={{ marginBottom: '16px' }}>
+              <select value={selectedMonth} onChange={e => setSelectedMonth(e.target.value)} style={inputStyle}>
+                <option value="">Select Month</option>
+                {archivedMonths.map(m => (
+                  <option key={m} value={m}>{m}</option>
+                ))}
+              </select>
+            </div>
+          )}
+          {selectedMonth && (
+            <>
+              <ExpenseList expenses={monthlyArchives[selectedMonth] || []} />
+              <p style={{ fontSize: '1.4rem', fontWeight: 'bold', margin: '8px 0' }}>
+                Total for {selectedMonth}: ${monthlyTotals[selectedMonth]?.toFixed(2) || '0.00'}
+              </p>
+              <MonthlyTotalsBarChart monthlyTotals={monthlyTotals} />
+            </>
+          )}
         </>
       )}
 
@@ -219,8 +297,8 @@ export default function App() {
     Previous
   </button>
   <button 
-    onClick={() => setPage(p => Math.min(2, p + 1))} 
-    disabled={page === 2}
+    onClick={() => setPage(p => Math.min(3, p + 1))} 
+    disabled={page === 3}
     style={{ fontSize: '1.2rem', padding: '10px 20px', borderRadius: '6px' }}
   >
     Next
