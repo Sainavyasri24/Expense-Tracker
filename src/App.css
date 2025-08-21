@@ -1,6 +1,6 @@
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(120deg, #f6d365 0%, #fda085 100%);
+  background: none;
   margin: 0;
   padding: 20px;
   color: #333;
@@ -8,17 +8,18 @@ body {
 }
 
 .container {
-  max-width: 1200px;
-  background: #f35454;
+  width: 100%;
+  max-width: none;
+  background: none;
   margin: 0 auto;
-  padding: 20px;
+  padding: 20px 20px 120px 20px;
   border-radius: 12px;
   box-shadow: 0 0 20px rgba(135, 46, 46, 0.12);
   font-size: 1.2rem;
 }
 
 form, .auth-form {
-  background: #5996d3;
+  background: none;
   border-radius: 10px;
   box-shadow: 0 2px 8px rgba(216, 140, 140, 0.06);
   padding: 18px 20px 12px 20px;
@@ -49,7 +50,7 @@ button:hover {
 
 table {
   font-size: 1.2rem;
-  background: #6264ed63;
+  background: none;
   border-radius: 10px;
   box-shadow: 0 2px 8px rgba(234, 79, 79, 0.06);
   overflow: hidden;
@@ -57,16 +58,16 @@ table {
 
 thead th {
   font-size: 1.3rem;
-  background: #f6d365;
+  background: none;
   color: #333;
 }
 
 tbody tr:nth-child(even) {
-  background: #f9fafb;
+  background: none;
 }
 
 .chart-container {
-  background: #fff;
+  background: none;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
   padding: 18px 10px 10px 10px;
@@ -96,4 +97,31 @@ tbody tr:nth-child(even) {
   .charts-row {
     flex-direction: column;
   }
+}
+
+.pager {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  z-index: 1000;
+}
+
+.pager button {
+  font-size: 1.8rem;
+  padding: 16px 32px;
+  border-radius: 14px;
+  border: 1px solid #7577ee;
+  background: #007bff;
+  color: #fff;
+  cursor: pointer;
+}
+
+.pager button:disabled {
+  background: #9bbcf3;
+  cursor: not-allowed;
 }

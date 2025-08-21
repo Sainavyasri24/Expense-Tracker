@@ -40,7 +40,7 @@ function SpendingOverTimeChart({ expenses }) {
       },
       title: {
         display: true,
-        text: 'Spending Over Time',
+        text: 'Daily Spending',
         font: {
           size: 28
         }
@@ -89,7 +89,7 @@ function SpendingOverTimeChart({ expenses }) {
   };
 
   return (
-    <div style={{ width: '50%', height: '500px', margin: '30px 0' }}>
+    <div style={{ width: '100%', height: '500px', margin: '30px 0' }}>
       <Line options={options} data={data} />
     </div>
   );

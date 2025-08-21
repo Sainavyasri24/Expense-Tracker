@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import CategoryPieChart from './CategoryPieChart';
 import SpendingOverTimeChart from './SpendingOverTimeChart';
+import './App.css';
 
 const categories = ['Food', 'Transport', 'Bills', 'Entertainment', 'Shopping', 'Other'];
 
@@ -126,6 +127,7 @@ export default function App() {
   const [filterStartDate, setFilterStartDate] = useState('');
   const [filterEndDate, setFilterEndDate] = useState('');
   const [budget, setBudget] = useState(1000);
+  const [page, setPage] = useState(1); // 1: Summary & Add form, 2: Filters, Charts & Table
 
   function handleAddExpense(expense) {
     setExpenses(prev => [
@@ -149,45 +151,81 @@ export default function App() {
 
   return (
     <div className="container">
-      <h2 style={{ fontSize: '2.2rem' }}>Expense Tracker</h2>
-      <input
-        type="number"
-        value={budget}
-        onChange={e => setBudget(parseFloat(e.target.value) || 0)}
-        placeholder="Set monthly budget"
-        style={inputStyle}
-      />
-      <BudgetSummary expenses={filteredExpenses} budget={budget} />
-      <AddExpense onAdd={handleAddExpense} />
-      <div style={{ marginBottom: '20px' }}>
-        <select value={filterCategory} onChange={e => setFilterCategory(e.target.value)} style={inputStyle}>
-          <option value="">All Categories</option>
-          {categories.map(cat => (
-            <option key={cat} value={cat}>{cat}</option>
-          ))}
-        </select>
-        <input
-          type="date"
-          value={filterStartDate}
-          onChange={e => setFilterStartDate(e.target.value)}
-          style={inputStyle}
-        />
-        <input
-          type="date"
-          value={filterEndDate}
-          onChange={e => setFilterEndDate(e.target.value)}
-          style={inputStyle}
-        />
-      </div>
-      <div className="charts-row">
-        <div className="chart-item">
-          <CategoryPieChart expenses={filteredExpenses} />
-        </div>
-        <div className="chart-item">
-          <SpendingOverTimeChart expenses={filteredExpenses} />
-        </div>
-      </div>
-      <ExpenseList expenses={filteredExpenses} />
+      {page === 1 && (
+        <>
+          <h2 style={{ fontSize: '2.2rem' }}>Expense Tracker</h2>
+          <input
+            type="number"
+            value={budget}
+            onChange={e => setBudget(parseFloat(e.target.value) || 0)}
+            placeholder="Set monthly budget"
+            style={inputStyle}
+          />
+          <BudgetSummary expenses={filteredExpenses} budget={budget} />
+          <AddExpense onAdd={handleAddExpense} />
+        </>
+      )}
+
+      {page === 2 && (
+        <>
+          <div style={{ marginBottom: '20px' }}>
+            <select value={filterCategory} onChange={e => setFilterCategory(e.target.value)} style={inputStyle}>
+              <option value="">All Categories</option>
+              {categories.map(cat => (
+                <option key={cat} value={cat}>{cat}</option>
+              ))}
+            </select>
+            <label style={{ marginLeft: '8px', fontWeight: 'bold' }}>dd-mm-yyyy</label>
+            <input
+              type="date"
+              value={filterStartDate}
+              onChange={e => setFilterStartDate(e.target.value)}
+              style={inputStyle}
+            />
+            <label style={{ marginLeft: '8px', fontWeight: 'bold' }}>dd-mm-yyyy</label>
+            <input
+              type="date"
+              value={filterEndDate}
+              onChange={e => setFilterEndDate(e.target.value)}
+              style={inputStyle}
+            />
+          </div>
+          <div className="charts-row">
+            <div className="chart-item">
+              <CategoryPieChart expenses={filteredExpenses} />
+            </div>
+            <div className="chart-item">
+              <SpendingOverTimeChart expenses={filteredExpenses} />
+            </div>
+          </div>
+          <ExpenseList expenses={filteredExpenses} />
+        </>
+      )}
+
+<div 
+  style={{ 
+    display: 'flex', 
+    justifyContent: 'center', 
+    alignItems: 'center', 
+    margin: '20px 0', 
+    gap: '10px' 
+  }}
+>
+  <button 
+    onClick={() => setPage(p => Math.max(1, p - 1))} 
+    disabled={page === 1}
+    style={{ fontSize: '1.2rem', padding: '10px 20px', borderRadius: '6px' }}
+  >
+    Previous
+  </button>
+  <button 
+    onClick={() => setPage(p => Math.min(2, p + 1))} 
+    disabled={page === 2}
+    style={{ fontSize: '1.2rem', padding: '10px 20px', borderRadius: '6px' }}
+  >
+    Next
+  </button>
+</div>
     </div>
   );
 }

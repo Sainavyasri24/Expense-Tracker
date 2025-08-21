@@ -29,7 +29,7 @@ function CategoryPieChart({ expenses }) {
   };
 
   return (
-    <div style={{ width: '50%',height: '600px', margin: '10px 0' }}>
+    <div style={{ width: '100%', height: '600px', margin: '10px 0' }}>
       <h3>Spending by Category</h3>
       <Pie data={data} />
     </div>
