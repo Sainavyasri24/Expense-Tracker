@@ -8,7 +8,7 @@ body {
 }
 
 .container {
-  max-width: 700px;
+  max-width: 1200px;
   background: #f35454;
   margin: 0 auto;
   padding: 20px;
@@ -36,7 +36,7 @@ input, select, button {
 button {
   cursor: pointer;
   background-color: #007bff;
-  color: white;
+  color: rgb(65, 226, 172);
   border: none;
   font-size: 1.1rem;
   box-shadow: 0 2px 4px rgba(0,0,0,0.08);
@@ -44,14 +44,14 @@ button {
 }
 
 button:hover {
-  background-color: #0056b3;
+  background-color: #e5f37c;
 }
 
 table {
   font-size: 1.2rem;
-  background: #fff;
+  background: #6264ed63;
   border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  box-shadow: 0 2px 8px rgba(234, 79, 79, 0.06);
   overflow: hidden;
 }
 
@@ -76,4 +76,24 @@ tbody tr:nth-child(even) {
 .auth-form {
   max-width: 350px;
   margin: 40px auto;
+}
+
+.charts-row {
+  display: flex;
+  gap: 16px;
+  align-items: stretch;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.chart-item {
+  flex: 1 1 500px;
+  min-width: 320px;
+}
+
+@media (max-width: 768px) {
+  .charts-row {
+    flex-direction: column;
+  }
 }

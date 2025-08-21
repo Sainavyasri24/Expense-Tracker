@@ -89,8 +89,8 @@ function SpendingOverTimeChart({ expenses }) {
   };
 
   return (
-    <div style={{ maxWidth: '1000px', height: '600px', margin: '30px auto' }}>
-      <Line options={options} data={data} width={800} height={600} />
+    <div style={{ width: '50%', height: '500px', margin: '30px 0' }}>
+      <Line options={options} data={data} />
     </div>
   );
 }

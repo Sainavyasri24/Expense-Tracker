@@ -16,31 +16,55 @@ function AddExpense({ onAdd }) {
     setAmount(''); setCategory(''); setDate(''); setNote('');
   }
 
+  const inputStyle = {
+    fontSize: '1.5rem',
+    padding: '10px',
+    margin: '8px',
+    borderRadius: '6px'
+  };
+
+  const buttonStyle = {
+    fontSize: '1.5rem',
+    padding: '10px 20px',
+    margin: '8px',
+    borderRadius: '6px',
+    cursor: 'pointer'
+  };
+
   return (
-    <form onSubmit={handleSubmit} style={{ marginBottom: 20 }}>
-      <label style={{ fontSize: '1.2rem', marginRight: 8 }}>Amount</label>
-      <input type="number" value={amount} onChange={e => setAmount(e.target.value)} placeholder="Amount" required />{' '}
-      <label style={{ fontSize: '1.2rem', marginRight: 8 }}>Category</label>
-      <select value={category} onChange={e => setCategory(e.target.value)} required>
+    <form onSubmit={handleSubmit} className="add-expense-form" style={{ marginBottom: 20 }}>
+      <label style={{ fontSize: '1.3rem', fontWeight: 'bold' }}>Amount</label>
+      <input type="number" value={amount} onChange={e => setAmount(e.target.value)} placeholder="Amount" required style={inputStyle} />{' '}
+      
+      <label style={{ fontSize: '1.3rem', fontWeight: 'bold' }}>Category</label>
+      <select value={category} onChange={e => setCategory(e.target.value)} required style={inputStyle}>
         <option value="">Select Category</option>
         {categories.map(cat => (
           <option key={cat} value={cat}>{cat}</option>
         ))}
       </select>{' '}
-      <label style={{ fontSize: '1.2rem', marginRight: 8 }}>Date</label>
-      <input type="date" value={date} onChange={e => setDate(e.target.value)} required />{' '}
-      <label style={{ fontSize: '1.2rem', marginRight: 8 }}>Note</label>
-      <input type="text" value={note} onChange={e => setNote(e.target.value)} placeholder="Note" />{' '}
-      <button type="submit" style={{ fontSize: '1.2rem' }}>Add Expense</button>
+      
+      <label style={{ fontSize: '1.3rem', fontWeight: 'bold' }}>Date</label>
+      <input type="date" value={date} onChange={e => setDate(e.target.value)} required style={inputStyle} />{' '}
+      
+      <label style={{ fontSize: '1.3rem', fontWeight: 'bold' }}>Note</label>
+      <input type="text" value={note} onChange={e => setNote(e.target.value)} placeholder="Note" style={inputStyle} />{' '}
+      
+      <button type="submit" style={buttonStyle}>Add Expense</button>
     </form>
   );
 }
 
 function ExpenseList({ expenses }) {
   return (
-    <table border="1" cellPadding="8" style={{ borderCollapse: 'collapse', width: '100%', fontSize: '1.2rem' }}>
+    <table border="1" cellPadding="12" style={{ borderCollapse: 'collapse', width: '100%', fontSize: '1.5rem' }}>
       <thead>
-        <tr style={{ fontSize: '1.3rem' }}><th>Date</th><th>Category</th><th>Amount</th><th>Note</th></tr>
+        <tr style={{ fontSize: '2rem' }}>
+          <th>Date</th>
+          <th>Category</th>
+          <th>Amount</th>
+          <th>Note</th>
+        </tr>
       </thead>
       <tbody>
         {expenses.map(exp => (
@@ -57,7 +81,6 @@ function ExpenseList({ expenses }) {
 }
 
 function BudgetSummary({ expenses, budget }) {
-  // Calculate total spent this month
   const currentMonth = new Date().toISOString().slice(0, 7); // YYYY-MM
   const monthlyTotal = expenses.reduce((total, exp) => {
     return exp.date.slice(0, 7) === currentMonth ? total + exp.amount : total;
@@ -68,7 +91,9 @@ function BudgetSummary({ expenses, budget }) {
   return (
     <div style={{ margin: '20px 0' }}>
       <h3 style={{ fontSize: '2rem' }}>Budget Summary</h3>
-      <p style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>Budget: ${budget.toFixed(2)} | Spent this month: ${monthlyTotal.toFixed(2)}</p>
+      <p style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>
+        Budget: ${budget.toFixed(2)} | Spent this month: ${monthlyTotal.toFixed(2)}
+      </p>
       <div style={{ backgroundColor: '#ccc', width: '100%', height: '20px', borderRadius: '10px' }}>
         <div 
           style={{ 
@@ -115,20 +140,27 @@ export default function App() {
            (!filterEndDate || expense.date <= filterEndDate);
   });
 
+  const inputStyle = {
+    fontSize: '1.5rem',
+    padding: '10px',
+    margin: '8px',
+    borderRadius: '6px'
+  };
+
   return (
     <div className="container">
-      <h2>Expense Tracker</h2>
+      <h2 style={{ fontSize: '2.2rem' }}>Expense Tracker</h2>
       <input
         type="number"
         value={budget}
         onChange={e => setBudget(parseFloat(e.target.value) || 0)}
         placeholder="Set monthly budget"
-        style={{ marginBottom: '20px' }}
+        style={inputStyle}
       />
       <BudgetSummary expenses={filteredExpenses} budget={budget} />
       <AddExpense onAdd={handleAddExpense} />
       <div style={{ marginBottom: '20px' }}>
-        <select value={filterCategory} onChange={e => setFilterCategory(e.target.value)}>
+        <select value={filterCategory} onChange={e => setFilterCategory(e.target.value)} style={inputStyle}>
           <option value="">All Categories</option>
           {categories.map(cat => (
             <option key={cat} value={cat}>{cat}</option>
@@ -138,17 +170,23 @@ export default function App() {
           type="date"
           value={filterStartDate}
           onChange={e => setFilterStartDate(e.target.value)}
-          style={{ marginLeft: '10px' }}
+          style={inputStyle}
         />
         <input
           type="date"
           value={filterEndDate}
           onChange={e => setFilterEndDate(e.target.value)}
-          style={{ marginLeft: '10px' }}
+          style={inputStyle}
         />
       </div>
-      <CategoryPieChart expenses={filteredExpenses} />
-      <SpendingOverTimeChart expenses={filteredExpenses} />
+      <div className="charts-row">
+        <div className="chart-item">
+          <CategoryPieChart expenses={filteredExpenses} />
+        </div>
+        <div className="chart-item">
+          <SpendingOverTimeChart expenses={filteredExpenses} />
+        </div>
+      </div>
       <ExpenseList expenses={filteredExpenses} />
     </div>
   );
