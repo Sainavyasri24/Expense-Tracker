@@ -59,7 +59,12 @@ Multi-user support.
 
 ##📊 Future Improvements
 
-Export expenses to CSV/PDF.
-Notifications for overspending.
-AI-powered spending suggestions.
+Export expenses to CSV/PDF.  
+
+Notifications for overspending.  
+
+AI-powered spending suggestions.  
+
 Dark mode support.
+
+
