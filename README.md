@@ -57,7 +57,7 @@ Multi-user support.
 **Charts & Graphs:** (e.g., Chart.js)  
 
 
-##📊 Future Improvements
+## 📊 Future Improvements
 
 Export expenses to CSV/PDF.  
 
