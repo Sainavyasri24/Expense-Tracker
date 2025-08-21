@@ -94,18 +94,17 @@ function ExpenseList({ expenses, showActions = false, onDelete }) {
 }
 
 function BudgetSummary({ expenses, budget }) {
-  const currentMonth = new Date().toISOString().slice(0, 7); // YYYY-MM
-  const monthlyTotal = expenses.reduce((total, exp) => {
-    return exp.date.slice(0, 7) === currentMonth ? total + exp.amount : total;
+  const totalSpent = expenses.reduce((total, exp) => {
+    return total + (exp.amount || 0);
   }, 0);
 
-  const percentUsed = Math.min((monthlyTotal / budget) * 100, 100);
+  const percentUsed = Math.min((totalSpent / budget) * 100, 100);
 
   return (
     <div style={{ margin: '20px 0' }}>
       <h3 style={{ fontSize: '2rem' }}>Budget Summary</h3>
       <p style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>
-        Budget: ${budget.toFixed(2)} | Spent this month: ${monthlyTotal.toFixed(2)}
+        Budget: ${budget.toFixed(2)} | Spent (filtered): ${totalSpent.toFixed(2)}
       </p>
       <div style={{ backgroundColor: '#ccc', width: '100%', height: '20px', borderRadius: '10px' }}>
         <div 
@@ -209,7 +208,6 @@ export default function App() {
             placeholder="Set monthly budget"
             style={inputStyle}
           />
-          <BudgetSummary expenses={filteredExpenses} budget={budget} />
           <AddExpense onAdd={handleAddExpense} />
         </>
       )}
@@ -238,6 +236,7 @@ export default function App() {
               style={inputStyle}
             />
           </div>
+          <BudgetSummary expenses={filteredExpenses} budget={budget} />
           <div className="charts-row">
             <div className="chart-item">
               <CategoryPieChart expenses={filteredExpenses} />
